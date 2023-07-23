@@ -1,1 +1,29 @@
-<h1>Hello world!</h1>
+<div class="mt-5 container col-8">
+  <div class="row mt-5">
+    <ul class="list-group">
+      {{#each records}}
+      <li class="list-group-item">
+        <div class="row align-items-center">
+          <div class="col-md-4 d-flex flex-column">
+            <div>{{this.name}}</div>
+            <div>{{this.date}}</div>
+          </div>
+          <div class="col-md-3 text-end">
+            {{{this.amount}}}
+          </div>
+          <div class="col-md-3 d-flex justify-content-center">
+            <a href="/records/{{this._id}}" class="btn btn-success mx-1">修改</a>
+            <form action="/records/{{this._id}}?_method=DELETE" method="POST" id="deleteForm-{{this._id}}">
+              <button class="btn btn-danger mx-1 deleteButton" type="submit" data-id="{{this._id}}">刪除</button>
+            </form>
+          </div>
+        </div>
+      </li>
+      {{/each}}
+    </ul>
+    <div class="mt-5 d-grid gap-2 col-4 mx-auto">
+      <a href="/records/new" class="btn btn-primary">新增支出</a>
+    </div>
+  </div>
+</div>
+
