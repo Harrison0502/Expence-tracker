@@ -6,7 +6,7 @@ const User = require('../../models/user')
 
 
 router.get('/',(req,res)=>{
-  Record.find()
+  Record.find().populate('categoryId')
   .lean()
   .then(records=>res.render('index', {records} ))
   .catch(error=>console.error(error))

@@ -20,6 +20,31 @@ router.post('/', (req, res) => {
     .catch(error => console.log(error))
 })
 
+//修改頁面
+router.get('/:id/edit', async (req, res) => {
+  try {
+    const recordId = req.params.id
+    const record = await Record.findById(recordId).populate('categoryId').lean();
+    const categories = await Category.find().lean();
+    res.render('edit', { record, categories });
+  } catch (error) {
+    console.error(error);
+    res.redirect('/')
+  }
+});
+
+router.post('/:id/edit', async (req, res) => {
+  try {
+    const recordId = req.params.id;
+    const { name, date, amount, category } = req.body
+    await Record.findByIdAndUpdate(recordId, { name, date, amount, categoryId: category });
+    res.redirect('/');
+  } catch (error) {
+    console.error(error);
+    res.redirect('/');
+  }
+});
+
 
 
 module.exports = router
