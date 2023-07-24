@@ -4,6 +4,7 @@ const Record = require('../../models/record')
 const Category = require('../../models/category')
 const User = require('../../models/user')
 const bodyParser = require('body-parser')
+const dayjs = require('dayjs')
 
 router.use(bodyParser.urlencoded({ extended: true }))
 
@@ -26,6 +27,8 @@ router.get('/:id/edit', async (req, res) => {
     const recordId = req.params.id
     const record = await Record.findById(recordId).populate('categoryId').lean();
     const categories = await Category.find().lean();
+    // 進行日期格式化
+    record.date = dayjs(record.date).format('YYYY-MM-DD');
     res.render('edit', { record, categories });
   } catch (error) {
     console.error(error);
@@ -33,12 +36,25 @@ router.get('/:id/edit', async (req, res) => {
   }
 });
 
-router.post('/:id/edit', async (req, res) => {
+//修改資料
+router.put('/:id', async (req, res) => {
   try {
     const recordId = req.params.id;
     const { name, date, amount, category } = req.body
     await Record.findByIdAndUpdate(recordId, { name, date, amount, categoryId: category });
     res.redirect('/');
+  } catch (error) {
+    console.error(error);
+    res.redirect('/');
+  }
+});
+
+//刪除功能
+router.delete('/:id', async (req, res) => {
+  try {
+    const recordId = req.params.id
+    await Record.findByIdAndDelete(recordId)
+    res.redirect('/')
   } catch (error) {
     console.error(error);
     res.redirect('/');
