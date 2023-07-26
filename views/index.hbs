@@ -1,41 +1,32 @@
-{{!-- <div class="mt-5 container col-8">
-  <div class="row mt-5">
-    <ul class="list-group">
-      {{#each records}}
-      <li class="list-group-item">
-        <div class="row align-items-center">
-            <i class="{{this.categoryId.image}}" style="color: #292b2e;"></i>
-          <div class="col-md-4 d-flex flex-column">
-            <div>{{this.name}}</div>
-            <div>{{this.date}}</div>
-          </div>
-          <div class="col-md-3 text-end">
-            {{{this.amount}}}
-          </div>
-          <div class="col-md-3 d-flex justify-content-center">
-            <a href="/records/{{this._id}}/edit" class="btn btn-success mx-1">修改</a>
-            <form action="/records/{{this._id}}?_method=DELETE" method="POST" id="deleteForm-{{this._id}}">
-              <button class="btn btn-danger mx-1 deleteButton" type="submit" data-id="{{this._id}}">刪除</button>
-            </form>
-          </div>
-        </div>
-      </li>
-      {{/each}}
-    </ul>
-    <div class="mt-5 d-grid gap-2 col-4 mx-auto">
-      <a href="/records/new" class="btn btn-primary">新增支出</a>
-    </div>
-  </div>
-</div> --}}
-
 <div class="mt-5 container col-8">
+  
+  
+<div class="col-md-12 mb-3">
+  <label for="categoryFilter" class="form-label">篩選類別：</label>
+  <select id="categoryFilter" class="form-select" onchange="filterByCategory()">
+    <option value="all">全部類別</option>
+    {{#each categories}}
+    <option value="{{this._id}}" {{#if (eq this._id selectedCategory)}}selected{{/if}}>{{this.name}}</option>
+    {{/each}}
+  </select>
+</div>
+
+  <div class="row mt-5">
+    <div class="col-md-12">
+      <div class="col-md-12">
+        <h3 class="text-center" style="font-size: 2rem;">
+          總金額：<span style="color: #ffa500; font-weight: bold;">{{totalAmount}} 元</span>
+        </h3>
+      </div>
+    </div>
+
   <div class="row mt-5">
     <ul class="list-group">
       {{#each records}}
       <li class="list-group-item">
         <div class="row align-items-center">
           <div class="col-md-2 text-center">
-            <i class="{{this.categoryId.image}}" style="color: #292b2e;"></i>
+            <i class="{{this.categoryId.image}}" style="color: #5c8ace; font-size: 1.8rem;"></i>
           </div>
           <div class="col-md-4 d-md-flex flex-md-column">
             <div class="font-weight-bold" style="font-size: 1.2rem;">{{this.name}}</div>
@@ -47,7 +38,7 @@
           <div class="col-md-3 d-md-flex justify-content-md-center">
             <a href="/records/{{this._id}}/edit" class="btn btn-success mx-1">修改</a>
             <form action="/records/{{this._id}}?_method=DELETE" method="POST" id="{{this._id}}">
-              <button class="btn btn-danger mx-1 deleteButton" type="submit" data-id="{{this._id}}">刪除</button>
+              <button class="btn btn-danger mx-1 deleteButton" type="submit" data-id="{{this._id}}" onclick="return confirm(`確定刪除 {{ this.name }} ? `)">刪除</button>
             </form>
           </div>
         </div>
@@ -55,9 +46,27 @@
       {{/each}}
     </ul>
     <div class="mt-5 d-grid gap-2 col-4 mx-auto">
-      <a href="/records/new" class="btn btn-primary">新增支出</a>
+      <a href="/records/new" class="btn btn-warning">新增支出</a>
     </div>
   </div>
 </div>
 
 
+{{!-- 定義 filterByCategory 函式 --}}
+<script>
+  function filterByCategory() {
+    const selectedCategory = document.getElementById('categoryFilter').value;
+    if (selectedCategory === 'all') {  // 當選擇了「全部類別」
+      window.location.href = '/records';  // 重新導向到預設路徑
+    } else {
+      window.location.href = `/records?category=${selectedCategory}`;
+    }
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+      const selectedCategory = "{{selectedCategory}}";  // 取得從後端傳來的選擇類別
+      const categoryFilter = document.getElementById('categoryFilter');
+      if (selectedCategory) {
+        categoryFilter.value = selectedCategory;  // 設定下拉選單的選擇
+      }
+    });
+</script>

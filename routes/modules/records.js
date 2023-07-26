@@ -62,5 +62,31 @@ router.delete('/:id', async (req, res) => {
 });
 
 
+//篩選類別路由
+router.get('/', async (req, res) => {
+  try {
+    const selectedCategory = req.query.category;  // 取得選擇的類別
+
+    let records;  // 用於存放支出記錄
+    if (selectedCategory && selectedCategory !== 'all') {  // 如果選擇了某個類別
+      records = await Record.find({ categoryId: selectedCategory }).populate('categoryId').lean();
+    } else {  // 如果選擇了「全部類別」或未選擇類別
+      records = await Record.find().populate('categoryId').lean();
+    }
+
+    records.forEach(record => {
+      record.date = dayjs(record.date).format('YYYY-MM-DD')
+    });
+
+    const totalAmount = records.reduce((total, record) => total + record.amount, 0);
+    const categories = await Category.find().lean();
+
+    res.render('index', { records, totalAmount, categories, selectedCategory });  // 將 selectedCategory 傳入樣板
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
 
 module.exports = router
