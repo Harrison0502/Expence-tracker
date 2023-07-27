@@ -6,22 +6,6 @@ const User = require('../../models/user')
 const dayjs = require('dayjs')
 
 
-// router.get('/', (req, res) => {
-//   Record.find()
-//     .populate('categoryId')
-//     .lean()
-//     .then(records => {
-//       records.forEach(record => {
-//         record.date = dayjs(record.date).format('YYYY-MM-DD');
-//       })
-//       const totalAmount = records.reduce((total, record) => total + record.amount, 0);
-//       const categories = Category.find().lean();
-//       res.render('index', { records, totalAmount, categories })
-      
-//     })
-//     .catch(error => console.error(error))
-// })
-
 router.get('/', async (req, res) => {
   try {
     const selectedCategory = req.query.category
