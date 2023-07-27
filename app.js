@@ -4,7 +4,7 @@ const session = require('express-session')
 const usePassport = require('./config/passport')
 const bodyParser = require('body-parser')
 const app = express()
-const port = 3000
+const PORT = process.env.PORT || 3000
 const methodOverride = require('method-override')
 const flash = require('connect-flash')   
 require('./config/mongoose')
@@ -45,6 +45,6 @@ app.use(routes)
 
 
 
-app.listen(port, () => {
-  console.log(`Express app listening on port ${port}.`)
+app.listen(PORT, () => {
+  console.log(`App is running on http://localhost:${PORT}`)
 })
