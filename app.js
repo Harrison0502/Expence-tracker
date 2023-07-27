@@ -9,6 +9,10 @@ const methodOverride = require('method-override')
 const flash = require('connect-flash')   
 require('./config/mongoose')
 const routes=require('./routes')
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
+
 
 app.engine('hbs', exphbs({
   helpers: {

@@ -1,53 +1,48 @@
-// const db = require('../../config/mongoose')
-// const Record=require('../record')
-// const Category = require('../category')
-
-// if (process.env.NODE_ENV !== 'production') {
-//   require('dotenv').config();
-// }
-
-// db.once('open', () => {
-//   console.log('mongodb connected!')
-//   for (let i = 1; i < 6; i++) {
-//     const categories = Category.find().lean()
-//     Record.create({ name: `exp-${i}`, date: new Date(), amount: i * 100, categoryId: categories[i - 1]._id })
-//       .then((record) => {
-//         console.log('Record created:', record);
-//       })
-//       .catch((err) => {
-//         console.error('Error creating record:', err);
-//       });
-//   }
-//   console.log('done')
-// })
-
-const db = require('../../config/mongoose')
 const Record = require('../record')
+const db = require('../../config/mongoose');
 const Category = require('../category')
-
+const bcrypt = require("bcryptjs");
+const User = require('../user');
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
 }
 
+
+const SEED_USERS = require('./data/seedUser.json')
+const SEED_RECORDS = require('./data/seedRecord.json')
+
 db.once('open', async () => {
   try {
-    console.log('mongodb connected!')
-
     const categories = await Category.find().lean()
 
-    const recordsData = []
-    for (let i = 1; i < 6; i++) {
-      recordsData.push({
-        name: `exp-${i}`,
-        date: new Date(),
-        amount: i * 100,
-        categoryId: categories[i - 1]._id
-      })
+    // 建立使用者
+    for (const user of SEED_USERS) {
+      const { name, email, password } = user;
+      const salt = await bcrypt.genSalt(10);
+      const hash = await bcrypt.hash(password, salt)
+      const newUser = await User.create({
+        name: name,
+        email: email,
+        password: hash,
+      });
+
+      // 建立支出紀錄
+      const recordsData = [];
+      const userId = newUser._id;
+      for (const index of user.recordIndex) {
+        const record = SEED_RECORDS[index]
+        recordsData.push({
+          name: record.name,
+          date: new Date(record.date),
+          amount: record.amount,
+          categoryId: categories.find(category => category.name === record.category)._id,
+          userId: userId,
+        })
+      }
+      await Record.insertMany(recordsData);
     }
 
-    await Record.insertMany(recordsData)
-    console.log('record seeder done!')
-
+    console.log('The exp-record seed data done!')
     process.exit()
   } catch (error) {
     console.log(error)

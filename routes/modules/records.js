@@ -82,12 +82,12 @@ router.delete('/:id', async (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const selectedCategory = req.query.category;  // 取得選擇的類別
-
+    const userId = req.user._id
     let records;  // 用於存放支出記錄
     if (selectedCategory && selectedCategory !== 'all') {  // 如果選擇了某個類別
-      records = await Record.find({ categoryId: selectedCategory }).populate('categoryId').lean();
+      records = await Record.find({ categoryId: selectedCategory, userId: userId }).populate('categoryId').lean();
     } else {  // 如果選擇了「全部類別」或未選擇類別
-      records = await Record.find().populate('categoryId').lean();
+      records = await Record.find({ userId: userId }).populate('categoryId').lean();
     }
 
     records.forEach(record => {
