@@ -5,6 +5,7 @@ const Category = require('../../models/category')
 const User = require('../../models/user')
 const bodyParser = require('body-parser')
 const passport = require('passport')
+const bcrypt = require('bcryptjs')
 const dayjs = require('dayjs')
 
 router.use(bodyParser.urlencoded({ extended: true }))
@@ -70,13 +71,16 @@ router.post('/register', (req, res) => {
         userExists: true
       })
     } else {
-      return User.create({
-        name,
-        email,
-        password
-      })
-        .then(() => res.redirect('/'))
-        .catch(err => console.log(err))
+      return bcrypt
+        .genSalt(10) // 產生「鹽」，並設定複雜度係數為 10
+        .then(salt => bcrypt.hash(password, salt)) // 為使用者密碼「加鹽」，產生雜湊值
+        .then(hash => User.create({
+          name,
+          email,
+          password: hash // 用雜湊值取代原本的使用者密碼
+        }))
+       .then(() => res.redirect('/'))
+       .catch(err => console.log(err))
     }
   })
     .catch(err => console.log(err))
