@@ -1,6 +1,6 @@
 # My Restaurant List
-![Login page for expense-tracker](./public/login)
-![Index page for expense-tracker](./public/index)
+![Login page for expense-tracker](./public/login.jpg)
+![Index page for expense-tracker](./public/index.jpg)
 
 ## Project Introduction
 This project provides users with a platform to record and manage their expenses. Users can perform functions like adding, deleting, editing, and filtering expenses.
