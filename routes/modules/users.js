@@ -4,6 +4,7 @@ const Record = require('../../models/record')
 const Category = require('../../models/category')
 const User = require('../../models/user')
 const bodyParser = require('body-parser')
+const passport = require('passport')
 const dayjs = require('dayjs')
 
 router.use(bodyParser.urlencoded({ extended: true }))
@@ -15,6 +16,11 @@ router.get('/login', async (req, res) => {
     console.error(error)
   }
 })
+
+router.post('/login', passport.authenticate('local', {
+  successRedirect: '/',
+  failureRedirect: '/users/login'
+}))
 
 router.get('/register', async (req, res) => {
   try {

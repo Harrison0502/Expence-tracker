@@ -1,6 +1,7 @@
 const express = require('express')
 const exphbs = require('express-handlebars')
 const session = require('express-session')
+const usePassport = require('./config/passport')
 const bodyParser = require('body-parser')
 const app = express()
 const port = 3000
@@ -22,6 +23,7 @@ app.use(session({
   saveUninitialized: true
 }))
 app.use(bodyParser.urlencoded({ extended: true }))
+usePassport(app)
 
 app.use(routes)
 
