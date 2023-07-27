@@ -9,9 +9,13 @@ const dayjs = require('dayjs')
 router.get('/', async (req, res) => {
   try {
     const selectedCategory = req.query.category
-
-    // 取得所有支出資料，並根據需要篩選類別
-    const records = await Record.find(selectedCategory ? { categoryId: selectedCategory } : {})
+    const userId = req.user._id
+    const records = await Record.find({
+      $and: [
+        selectedCategory ? { categoryId: selectedCategory } : {}, 
+        { userId: userId }, 
+      ],
+    })
       .populate('categoryId')
       .lean();
 
